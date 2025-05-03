@@ -110,6 +110,26 @@ create_admin()  # Run once at start (Auto create user_id for Admin)
 
 # ----------------- FOR USER ----------------- #
 
+def user_panel():
+    while True:
+        try :
+            print("1. View your details")
+            print("2. View your balance")
+            print("3. Withdraw money")
+            print("4. Deposit money")
+            print("5. Money transfer")
+            print("6. View transaction history")
+            print("7.Exit")
+
+            if choice == 1:
+                print("x")         ################## edit this part
+            else :
+                print("Invlid choice")
+
+        except ValueError:
+            print(" Enter numbers only!")
+
+
 while True:
     print("-" * 50) 
     print("      Welcome to the Mini Bank System",)
@@ -137,6 +157,7 @@ while True:
             role = verify_login(u_id, pw)
             if role == "user":
                 print(f"\nWelcome User {u_id}!")
+                user_panel()
             elif role == "admin":
                 print("This is an admin account. Use Admin Login.")
             else:
