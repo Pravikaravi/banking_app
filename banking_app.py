@@ -2,16 +2,16 @@ import os
 
 def create_admin():
     if not admin_exists():
-        with open("User.txt", "a") as file:
-            file.write("U00000    |     Admin  | Admin@123   | admin\n")
+        with open("Users.txt", "a") as file:
+            file.write("U00000    | Admin  | Admin@123   | admin\n")
         print("Admin account created successfully!")
         print("Admin User ID: U00000")
         print("Secret pin must be given to admin manually.\n")
 
 def admin_exists():
-    if not os.path.exists("User.txt"): 
+    if not os.path.exists("Users.txt"): 
         return False
-    with open("User.txt", "r") as file:
+    with open("Users.txt", "r") as file:
         for line in file:
             if "admin" in line.strip().lower(): # Check any line in the file has the word admin
                 return True
@@ -19,22 +19,22 @@ def admin_exists():
 
 def generate_user_id():
     digit = 0
-    if os.path.exists("User.txt"):
-        with open("User.txt", "r") as file:
+    if os.path.exists("Users.txt"):
+        with open("Users.txt", "r") as file:
             digit = len(file.readlines())
     user_id = "U" + str(digit).zfill(5)
     return user_id
 
 
 def create_customer(user_id, name, password, role="user"):
-    with open("User.txt", "a") as file:
+    with open("Users.txt", "a") as file:
         file.write(f"{user_id:<10}| {name:<7}| {password:<12}| {role}\n")
     print("Customer created successfully!")
 
 def verify_login(user_id, password):                          #Check user_id and password match
-    if not os.path.exists("User.txt"):                    #check User.txt exists or not
+    if not os.path.exists("Users.txt"):                    #check Users.txt exists or not
         return None
-    with open("User.txt", "r") as file:                   #Open file in read mode
+    with open("Users.txt", "r") as file:                   #Open file in read mode
         for line in file:                                     #reads line by line
             parts = [p.strip() for p in line.split("|")]      #Split ech line using | as the separtor.    Ex: U00001 | Pravi | 1234 | "user"       (p is part of parts)
                                                                                                         # parts = ["U00001" , "Pravi" , "1234" , "user"]
@@ -42,11 +42,25 @@ def verify_login(user_id, password):                          #Check user_id and
                 return parts[3]                                                                         # Return role (admin/user)
     return None
 
+
+def generate_customer_id():
+    digit = 1
+    if os.path.exists("Customers.txt"):
+        with open("Customers.txt", "r") as file:
+            digit = len(file.readlines())
+    customer_id = "C" + str(digit).zfill(5)
+    return customer_id
+
+def create_customer_file(customer_id, name, user_id):
+    with open("Customers.txt", "a") as file:
+        file.write(f"{customer_id:<10}| {name:<12}| {user_id:<12}\n")
+
+
 def show_all_customers():
-    if os.path.exists("User.txt"):
+    if os.path.exists("Users.txt"):
         print(f"{'User ID':<10}| {'Name':<12}| {'Password':<12}| {'Role'}")
         print("-" * 50)
-        with open("User.txt", "r") as file:
+        with open("Users.txt", "r") as file:
             for line in file:
                 parts = [p.strip() for p in line.strip().split("|")]
                 if len(parts) == 4:
@@ -55,30 +69,26 @@ def show_all_customers():
         print("No customer data found.")
 
 
-def generate_customer_id():
+def generate_account_id():
     digit = 1
-    if os.path.exists("Customer.txt"):
-        with open("Customer.txt", "r") as file:
+    if os.path.exists("Accounts.txt"):
+        with open("Accouts.txt", "r") as file:
             digit = len(file.readlines())
-    customer_id = "C" + str(digit).zfill(5)
-    return customer_id
+    account_id = "AC" + str(digit).zfill(5)
+    return account_id
 
-def create_customer_file(customer_id, name, user_id):
-    with open("Customer.txt", "a") as file:
-        file.write(f"{customer_id:<10}| {name:<12}| {user_id:<12}\n")
-
-def create_account_file(user_id, customer_id, balance):
-    with open("Account.txt", "a") as file:
-        file.write(f"{user_id:<10}| {customer_id:<10}| {balance:<50}\n")
+def create_account_file(account_id, user_id, customer_id, balance):
+    with open("Accounts.txt", "a") as file:
+        file.write(f"{account_id:<10}| {user_id:<10}| {customer_id:<10}| {balance:<50}\n")
     
 def view_user_details(user_id):
     name = ""
     role = ""
     print("\n--- Your Profile Details ---")
     
-    # Fetch from User.txt
-    if os.path.exists("User.txt"):
-        with open("User.txt", "r") as f:
+    # Fetch user details from Users.txt
+    if os.path.exists("Users.txt"):
+        with open("Users.txt", "r") as f:
             for line in f:
                 parts = [p.strip() for p in line.strip().split("|")]
                 if len(parts) == 4 and parts[0] == user_id:
@@ -90,16 +100,37 @@ def view_user_details(user_id):
                     print(f"Role      : {parts[3]}")
                     break
 
-    # Fetch from Customer.txt
-    if os.path.exists("Customer.txt"):
-        with open("Customer.txt", "r") as f:
+    # Fetch some user details from Customers.txt
+    if os.path.exists("Customers.txt"):
+        with open("Customers.txt", "r") as f:
             for line in f:
                 parts = [p.strip() for p in line.strip().split("|")]
                 if len(parts) == 3 and parts[2] == user_id:
                     print(f"Customer ID: {parts[0]}")
                     break
 
+def view_customer_balances(user_id):
+    print("--- All Account Balances---")
 
+    #Fetch customer details from Users.txt
+    if os.path.exists("Accounts.txt"):
+        with open("Accounts.txt" , "r") as f:
+            for line in f:
+                parts = [p.strip() for p in line.strip().split("|")]
+                if len(parts) == 4 and parts[1] == user_id:
+                    print(f"Account Number : {parts[0]}")
+                    print(f"Balance: {parts[3]}")
+                    break
+
+    #Fetch customer details from Users.txt
+    if os.path.exists("Users.txt"):
+        with open("Users.txt" , "r") as f:
+            for line in f:
+                parts = [p.strip() for p in line.strip().split("|")]
+                if len(parts) == 4 and parts[1] == user_id:
+                    print(f"User ID : {parts[0]}")
+                    print(f"Name : {parts[1]}")
+                    break
 
 # ----------------- FOR ADMIN ----------------- #
 
@@ -107,7 +138,7 @@ def admin_dashboard():
     while True:
         print("\nAdmin Dashboard:")
         print("1. Create new customer")
-        print("2. View all customers")
+        print("2. View all users")
         print("3. View all customer balance")
         print("4. Search customer")
         print("5. Delete customer")
@@ -120,15 +151,16 @@ def admin_dashboard():
                 name = input("Enter customer name: ")
                 password = input("Set temporary password: ")
                 balance = float(input("Enter initial balance: "))
+                account_id = generate_account_id()
                 user_id = generate_user_id()
                 customer_id = generate_customer_id()
                 create_customer(user_id, name, password, role="user")
                 create_customer_file(customer_id, name, user_id)
-                create_account_file(user_id, customer_id, balance)
+                create_account_file(account_id, user_id, customer_id, balance)
             elif choice == 2:
                 show_all_customers()
             elif choice == 3:
-                break
+                view_user_details()
             else:
                 print("Invalid option!")
         except ValueError:
@@ -140,7 +172,6 @@ create_admin()  # Run once at start (Auto create user_id for Admin)
 
 def user_panel():
     while True:
-        try :
             print("1. View your details")
             print("2. View your balance")
             print("3. Withdraw money")
@@ -148,14 +179,15 @@ def user_panel():
             print("5. Money transfer")
             print("6. View transaction history")
             print("7.Exit")
+            try:
+                choice = int(input("Enter your choice : "))
+                if choice == 1:
+                    view_user_details()
+                else :
+                    print("Invlid choice")
 
-            if choice == 1:
-                print("x")         ################## edit this part
-            else :
-                print("Invlid choice")
-
-        except ValueError:
-            print(" Enter numbers only!")
+            except ValueError:
+                print(" Enter numbers only!")
 
 
 while True:
