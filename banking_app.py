@@ -81,56 +81,51 @@ def create_account_file(account_id, user_id, customer_id, balance):
     with open("Accounts.txt", "a") as file:
         file.write(f"{account_id:<10}| {user_id:<10}| {customer_id:<10}| {balance:<50}\n")
     
-def view_user_details(user_id):
-    name = ""
-    role = ""
-    print("\n--- Your Profile Details ---")
+# def view_user_details(user_id):
+#     name = ""
+#     role = ""
+#     print("\n--- Your Profile Details ---")
     
-    # Fetch user details from Users.txt
-    if os.path.exists("Users.txt"):
-        with open("Users.txt", "r") as f:
-            for line in f:
-                parts = [p.strip() for p in line.strip().split("|")]
-                if len(parts) == 4 and parts[0] == user_id:
-                    name = parts[1]
-                    role = parts[3]
-                    print(f"User ID   : {parts[0]}")
-                    print(f"Name      : {parts[1]}")
-                    print(f"Password  : {parts[2]}")
-                    print(f"Role      : {parts[3]}")
-                    break
+#     # Fetch user details from Users.txt
+#     if os.path.exists("Users.txt"):
+#         with open("Users.txt", "r") as f:
+#             for line in f:
+#                 parts = [p.strip() for p in line.strip().split("|")]
+#                 if len(parts) == 4 and parts[0] == user_id:
+#                     name = parts[1]
+#                     role = parts[3]
+#                     print(f"User ID   : {parts[0]}")
+#                     print(f"Name      : {parts[1]}")
+#                     print(f"Password  : {parts[2]}")
+#                     print(f"Role      : {parts[3]}")
+#                     break
 
-    # Fetch some user details from Customers.txt
-    if os.path.exists("Customers.txt"):
-        with open("Customers.txt", "r") as f:
-            for line in f:
-                parts = [p.strip() for p in line.strip().split("|")]
-                if len(parts) == 3 and parts[2] == user_id:
-                    print(f"Customer ID: {parts[0]}")
-                    break
+#     # Fetch some user details from Customers.txt
+#     if os.path.exists("Customers.txt"):
+#         with open("Customers.txt", "r") as f:
+#             for line in f:
+#                 parts = [p.strip() for p in line.strip().split("|")]
+#                 if len(parts) == 3 and parts[2] == user_id:
+#                     print(f"Customer ID: {parts[0]}")
+#                     break
 
-def view_customer_balances(user_id):
-    print("--- All Account Balances---")
+def view_all_balances():
+    if not os.path.exists("Accounts.txt") and not os.path.exists("Users.txt"):
+        print("Accouts file not found")
+        return
+    
+    user_names = {}
+    with open("Users.txt","r") as Users_file:
+        for line in Users_file:
+            parts = [p.strip() for p in line.strip().split("|") ]
+            if len(parts) >= 2:
+                user_id = parts[0]
+                user_name = parts[1]
+                user_names[user_id] = user_name
 
-    #Fetch customer details from Users.txt
-    if os.path.exists("Accounts.txt"):
-        with open("Accounts.txt" , "r") as f:
-            for line in f:
-                parts = [p.strip() for p in line.strip().split("|")]
-                if len(parts) == 4 and parts[1] == user_id:
-                    print(f"Account Number : {parts[0]}")
-                    print(f"Balance: {parts[3]}")
-                    break
+    print("\n-------------- All User Balances --------------")
+    print(f"\n{"Account_Number":<10} | {"       Name":<20} | {"Balance"}")
 
-    #Fetch customer details from Users.txt
-    if os.path.exists("Users.txt"):
-        with open("Users.txt" , "r") as f:
-            for line in f:
-                parts = [p.strip() for p in line.strip().split("|")]
-                if len(parts) == 4 and parts[1] == user_id:
-                    print(f"User ID : {parts[0]}")
-                    print(f"Name : {parts[1]}")
-                    break
 
 # ----------------- FOR ADMIN ----------------- #
 
@@ -160,7 +155,7 @@ def admin_dashboard():
             elif choice == 2:
                 show_all_customers()
             elif choice == 3:
-                view_user_details()
+                view_all_balances()
             else:
                 print("Invalid option!")
         except ValueError:
