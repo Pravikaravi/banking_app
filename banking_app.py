@@ -71,6 +71,34 @@ def create_account_file(user_id, customer_id, balance):
     with open("Account.txt", "a") as file:
         file.write(f"{user_id:<10}| {customer_id:<10}| {balance:<50}\n")
     
+def view_user_details(user_id):
+    name = ""
+    role = ""
+    print("\n--- Your Profile Details ---")
+    
+    # Fetch from User.txt
+    if os.path.exists("User.txt"):
+        with open("User.txt", "r") as f:
+            for line in f:
+                parts = [p.strip() for p in line.strip().split("|")]
+                if len(parts) == 4 and parts[0] == user_id:
+                    name = parts[1]
+                    role = parts[3]
+                    print(f"User ID   : {parts[0]}")
+                    print(f"Name      : {parts[1]}")
+                    print(f"Password  : {parts[2]}")
+                    print(f"Role      : {parts[3]}")
+                    break
+
+    # Fetch from Customer.txt
+    if os.path.exists("Customer.txt"):
+        with open("Customer.txt", "r") as f:
+            for line in f:
+                parts = [p.strip() for p in line.strip().split("|")]
+                if len(parts) == 3 and parts[2] == user_id:
+                    print(f"Customer ID: {parts[0]}")
+                    break
+
 
 
 # ----------------- FOR ADMIN ----------------- #
@@ -143,7 +171,7 @@ while True:
 
         if choice == 1:
             u_id = input("Enter admin user ID: ")
-            pin = input("Enter admin pin: ")
+            pin = input("Enter admin password: ")
             role = verify_login(u_id, pin)
             if role == "admin":
                 print(f"\nWelcome Admin {u_id}!")
